@@ -10,7 +10,12 @@
             <v-list-tile-title>Home</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-        <v-list-tile router :to="{ name: 'login' }" exact>
+        <v-list-tile
+          v-if="isLogin === false"
+          router
+          :to="{ name: 'login' }"
+          exact
+        >
           <v-list-tile-action>
             <v-icon>contact_mail</v-icon>
           </v-list-tile-action>
@@ -18,7 +23,7 @@
             <v-list-tile-title>로그인</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
-        <v-list-tile router :to="{ name: 'mypage' }" exact>
+        <v-list-tile v-else router :to="{ name: 'mypage' }" exact>
           <v-list-tile-action>
             <v-icon>contact_mail</v-icon>
           </v-list-tile-action>
@@ -33,8 +38,20 @@
       <v-toolbar-title>Application</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-toolbar-items class="hidden-sm-and-down">
-        <v-btn flat v-if="isLogin">웰컴</v-btn>
-        <v-btn flat v-eslse router :to="{ name: 'login' }">Log In</v-btn>
+        <v-menu offset-y v-if="isLogin">
+          <template v-slot:activator="{ on }">
+            <v-btn dark v-on="on" flat icon> <v-icon>menu</v-icon> </v-btn>
+          </template>
+          <v-list>
+            <v-list-tile router :to="{ name: 'mypage' }">
+              <v-list-tile-title>마이페이지</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile @click="$store.dispatch('logout')">
+              <v-list-tile-title>로그아웃</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
+        <v-btn flat v-else router :to="{ name: 'login' }">Log In</v-btn>
       </v-toolbar-items>
     </v-toolbar>
     <v-content>
@@ -55,6 +72,9 @@ export default {
   computed: {
     ...mapState(["isLogin"]),
   },
+  // methods: {
+  //   ...mapActions(["logout"]),
+  // },
   props: {
     source: String,
   },
